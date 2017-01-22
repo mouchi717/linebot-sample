@@ -1,16 +1,38 @@
 #!/usr/local/bin/ruby
 # encoding: utf-8
 
-require 'rubygems'
 require 'sinatra'
 require 'line/bot'
 
+# 動作確認用
 get '/' do
   'Hello World'
 end
 
+class HTTPProxyClient
+  def http(uri)
+    proxy_class = Net::HTTP::Proxy(ENV["FIXIE_URL_HOST"], ENV["FIXIE_URL_POST"], ENV["FIXIE_URL_USER"], ENV["FIXIE_URL_PASSWORD"])
+    http = proxy_class.new(uri.host, uri.port)
+    if uri.scheme == "https"
+      http.use_ssl = true
+    end
+    http
+  end
+
+  def get(url, header = {})
+    uri = URI(url)
+    http(uri).get(uri.request_uri, header)
+  end
+
+  def post(url, payload, header = {})
+    uri = URI(url)
+    http(uri).post(uri.request_uri, payload, header)
+  end
+end
+
 def client
   @client ||= Line::Bot::Client.new { |config|
+    config.httpclient = HTTPProxyClient.new
     config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
     config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
   }
@@ -45,5 +67,3 @@ post '/callback' do
 
   "OK"
 end
-
-
