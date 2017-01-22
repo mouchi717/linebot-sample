@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    line-bot-api (1.0.0)
     rack (1.6.5)
     rack-protection (1.5.3)
       rack
@@ -14,6 +15,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  line-bot-api
   sinatra
 
 BUNDLED WITH
