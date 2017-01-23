@@ -5,10 +5,6 @@ require 'sinatra'
 require 'line/bot'
 require 'date'
 
-
-GARBAGE_WORDS = ["ごみ", "ゴミ"]
-GARBAGE_WORDS.freeze
-
 class Date
   (1..5).each { |n|
     define_method("第#{n}?") { (self.day.to_f / 7.to_f).ceil == n }
@@ -52,8 +48,8 @@ get '/push' do
       type: 'text',
       text: messageBody
     }
-    response = client.push_message(ENV["LINE_CHANNEL_ID"], message)
-    p response
+    # response = client.push_message(ENV["LINE_CHANNEL_ID"], message)
+    # p response
   end
 end
 
@@ -73,9 +69,11 @@ post '/callback' do
       case event.type
       when Line::Bot::Event::MessageType::Text
 
-        p event.source=['type']
-        p event.source=['userId']
+        p event.source['type']
+        p event.source['userId']
         messageBody = ''
+        GARBAGE_WORDS = ["ごみ", "ゴミ"]
+        GARBAGE_WORDS.freeze
         if GARBAGE_WORDS.include?(event.message['text'])then
 
           明日 = Date.today + 1
