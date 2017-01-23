@@ -42,12 +42,8 @@ get '/push' do
   targets << "可燃ゴミ" if 今日.月曜日? or 今日.木曜日?
   targets << "不燃ゴミ" if 今日.第2土曜日?
   targets << "資源ゴミ" if 今日.金曜日?
-  messageBody = targetDate.to_time == Date.today.to_time ? "今日" : "明日"
-  if targets.empty? then
-    messageBody << "はゴミの日ちゃうで"
-  else
-    messageBody << "は%sの日やで" % targets.map { |target| "「#{target}」" }.join
-  end
+
+  messageBody = targets.empty? ? "今日はゴミの日ちゃうで" : "今日は%sの日やで" % targets.map { |target| "「#{target}」" }.join
   message = {
     type: 'text',
     text: messageBody
@@ -80,7 +76,12 @@ post '/callback' do
           targets << "資源ゴミ" if targetDate.金曜日?
 
           messageBody = targetDate.to_time == Date.today.to_time ? "今日" : "明日"
-          messageBody << targets.empty? ? "はゴミの日ちゃうで" : "は%sの日やで" % targets.map { |target| "「#{target}」" }.join
+          if targets.empty? then
+            messageBody << "はゴミの日ちゃうで"
+          else
+            messageBody << "は%sの日やで" % targets.map { |target| "「#{target}」" }.join
+          end
+
           message = {
             type: 'text',
             text: messageBody
