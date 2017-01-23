@@ -48,7 +48,7 @@ get '/push' do
     type: 'text',
     text: messageBody
   }
-  response = client.push_message(ENV["LINE_CHANNEL_ID"], message)
+  response = client.push_message(ENV["UID_OUCHI"], message)
   p response
 end
 
