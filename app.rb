@@ -83,7 +83,7 @@ post '/callback' do
           }
           client.reply_message(event['replyToken'], message)
         else
-          client.reply_message(event['replyToken'], 'すまんな。"ごみ"or"ゴミ"以外対応してないんや。')
+          client.reply_message(event['replyToken'], 'すまんな。ごみorゴミ以外対応してないんや。')
         end
       end
     end
