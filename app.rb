@@ -68,7 +68,7 @@ post '/callback' do
       case event.type
       when Line::Bot::Event::MessageType::Text
         GARBAGE_WORDS = ["ごみ", "ゴミ"]
-        if GARBAGE_WORDS.include?(event.message['text'])then
+        if GARBAGE_WORDS.include?(event.message['text']) then
           targetDate = Date.today.to_time.hour.between?(5, 9) ? Date.today : Date.today + 1
           targets = []
           targets << "可燃ゴミ" if targetDate.月曜日? or targetDate.木曜日?
@@ -83,7 +83,11 @@ post '/callback' do
           }
           client.reply_message(event['replyToken'], message)
         else
-          client.reply_message(event['replyToken'], 'すまんな。ごみorゴミ以外対応してないんや。')
+          message = {
+            type: 'text',
+            text: 'すまんな。"ごみ"or"ゴミ"以外対応してないんや。'
+          }
+          client.reply_message(event['replyToken'], message)
         end
       end
     end
