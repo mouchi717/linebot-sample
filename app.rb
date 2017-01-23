@@ -52,16 +52,16 @@ post '/callback' do
       when Line::Bot::Event::MessageType::Text
 
         messageBody = ''
-        if event.message['text'] == 'ごみ' then
+        gomis = ["ごみ", "ゴミ"]
+        if gomis.include?(event.message['text'])then
 
           明日 = Date.today + 1
           targets = []
-          # targets << "可燃ゴミ" if 明日.月曜日? or 明日.木曜日?
-          # targets << "不燃ゴミ" if 明日.第2土曜日?
-          # targets << "資源ゴミ" if 明日.金曜日?
-          targets << "ゴミ"
+          targets << "可燃ゴミ" if 明日.月曜日? or 明日.木曜日?
+          targets << "不燃ゴミ" if 明日.第2土曜日?
+          targets << "資源ゴミ" if 明日.金曜日?
 
-          messageBody = targets.empty? ? nil : "明日は%sの日です" % targets.map { |target| "「#{target}」" }.join
+          messageBody = targets.empty? ? "明日はゴミの日ちゃうで" : "明日は%sの日やで" % targets.map { |target| "「#{target}」" }.join
         else
           messageBody = event.message['text']
         end
