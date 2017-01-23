@@ -42,8 +42,12 @@ get '/push' do
   targets << "可燃ゴミ" if 今日.月曜日? or 今日.木曜日?
   targets << "不燃ゴミ" if 今日.第2土曜日?
   targets << "資源ゴミ" if 今日.金曜日?
-
-  messageBody = targets.empty? ? "今日はゴミの日ちゃうで" : "今日は%sの日やで" % targets.map { |target| "「#{target}」" }.join
+  messageBody = targetDate.to_time == Date.today.to_time ? "今日" : "明日"
+  if targets.empty? then
+    messageBody << "はゴミの日ちゃうで"
+  else
+    messageBody << "は%sの日やで" % targets.map { |target| "「#{target}」" }.join
+  end
   message = {
     type: 'text',
     text: messageBody
@@ -85,7 +89,7 @@ post '/callback' do
         else
           message = {
             type: 'text',
-            text: 'すまんな。"ごみ"or"ゴミ"以外対応してないんや。'
+            text: 'すまんな。"ごみ"か"ゴミ"以外対応してないんや。'
           }
           client.reply_message(event['replyToken'], message)
         end
