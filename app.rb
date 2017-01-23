@@ -67,36 +67,26 @@ post '/callback' do
     when Line::Bot::Event::Message
       case event.type
       when Line::Bot::Event::MessageType::Text
-
-        p body
-
-        messageBody = ''
         GARBAGE_WORDS = ["ごみ", "ゴミ"]
-        GARBAGE_WORDS.freeze
         if GARBAGE_WORDS.include?(event.message['text'])then
-
-          明日 = Date.today + 1
+          targetDate = Date.today.to_time.hour.between?(5, 9) ? Date.today : Date.today + 1
           targets = []
-          targets << "可燃ゴミ" if 明日.月曜日? or 明日.木曜日?
-          targets << "不燃ゴミ" if 明日.第2土曜日?
-          targets << "資源ゴミ" if 明日.金曜日?
+          targets << "可燃ゴミ" if targetDate.月曜日? or targetDate.木曜日?
+          targets << "不燃ゴミ" if targetDate.第2土曜日?
+          targets << "資源ゴミ" if targetDate.金曜日?
 
-          messageBody = targets.empty? ? "明日はゴミの日ちゃうで" : "明日は%sの日やで" % targets.map { |target| "「#{target}」" }.join
+          messageBody = targetDate == Date.today ? "今日" : "明日"
+          messageBody << targets.empty? ? "はゴミの日ちゃうで" : "は%sの日やで" % targets.map { |target| "「#{target}」" }.join
+          message = {
+            type: 'text',
+            text: messageBody
+          }
+          client.reply_message(event['replyToken'], message)
         else
-          messageBody = event.message['text']
+          client.reply_message(event['replyToken'], 'すまんな。"ごみ"or"ゴミ"以外対応してないんや。')
         end
-        message = {
-          type: 'text',
-          text: messageBody
-        }
-        client.reply_message(event['replyToken'], message)
-      when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
-        response = client.get_message_content(event.message['id'])
-        tf = Tempfile.open("content")
-        tf.write(response.body)
       end
     end
   }
-
   "OK"
 end
