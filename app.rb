@@ -5,6 +5,10 @@ require 'sinatra'
 require 'line/bot'
 require 'date'
 
+
+GARBAGE_WORDS = ["ごみ", "ゴミ"]
+GARBAGE_WORDS.freeze
+
 class Date
   (1..5).each { |n|
     define_method("第#{n}?") { (self.day.to_f / 7.to_f).ceil == n }
@@ -35,6 +39,24 @@ def client
   }
 end
 
+get '/push' do
+
+    今日 = Date.today
+    targets = []
+    targets << "可燃ゴミ" if 今日.月曜日? or 今日.木曜日?
+    targets << "不燃ゴミ" if 今日.第2土曜日?
+    targets << "資源ゴミ" if 今日.金曜日?
+
+    messageBody = targets.empty? ? "今日はゴミの日ちゃうで" : "今日は%sの日やで" % targets.map { |target| "「#{target}」" }.join
+    message = {
+      type: 'text',
+      text: messageBody
+    }
+    response = client.push_message(ENV["LINE_CHANNEL_ID"], message)
+    p response
+  end
+end
+
 post '/callback' do
   body = request.body.read
 
@@ -51,9 +73,10 @@ post '/callback' do
       case event.type
       when Line::Bot::Event::MessageType::Text
 
+        p event.source=['type']
+        p event.source=['userId']
         messageBody = ''
-        gomis = ["ごみ", "ゴミ"]
-        if gomis.include?(event.message['text'])then
+        if GARBAGE_WORDS.include?(event.message['text'])then
 
           明日 = Date.today + 1
           targets = []
