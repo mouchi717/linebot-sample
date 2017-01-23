@@ -68,8 +68,8 @@ post '/callback' do
       case event.type
       when Line::Bot::Event::MessageType::Text
 
-        p event.source['type']
-        p event.source['userId']
+        p body
+
         messageBody = ''
         GARBAGE_WORDS = ["ごみ", "ゴミ"]
         GARBAGE_WORDS.freeze
