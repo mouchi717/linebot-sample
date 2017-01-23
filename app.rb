@@ -75,7 +75,7 @@ post '/callback' do
           targets << "不燃ゴミ" if targetDate.第2土曜日?
           targets << "資源ゴミ" if targetDate.金曜日?
 
-          messageBody = targetDate == Date.today ? "今日" : "明日"
+          messageBody = targetDate.to_time == Date.today.to_time ? "今日" : "明日"
           messageBody << targets.empty? ? "はゴミの日ちゃうで" : "は%sの日やで" % targets.map { |target| "「#{target}」" }.join
           message = {
             type: 'text',
