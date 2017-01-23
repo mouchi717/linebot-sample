@@ -37,20 +37,19 @@ end
 
 get '/push' do
 
-    今日 = Date.today
-    targets = []
-    targets << "可燃ゴミ" if 今日.月曜日? or 今日.木曜日?
-    targets << "不燃ゴミ" if 今日.第2土曜日?
-    targets << "資源ゴミ" if 今日.金曜日?
+  今日 = Date.today
+  targets = []
+  targets << "可燃ゴミ" if 今日.月曜日? or 今日.木曜日?
+  targets << "不燃ゴミ" if 今日.第2土曜日?
+  targets << "資源ゴミ" if 今日.金曜日?
 
-    messageBody = targets.empty? ? "今日はゴミの日ちゃうで" : "今日は%sの日やで" % targets.map { |target| "「#{target}」" }.join
-    message = {
-      type: 'text',
-      text: messageBody
-    }
-    # response = client.push_message(ENV["LINE_CHANNEL_ID"], message)
-    # p response
-  end
+  messageBody = targets.empty? ? "今日はゴミの日ちゃうで" : "今日は%sの日やで" % targets.map { |target| "「#{target}」" }.join
+  message = {
+    type: 'text',
+    text: messageBody
+  }
+  response = client.push_message(ENV["LINE_CHANNEL_ID"], message)
+  p response
 end
 
 post '/callback' do
